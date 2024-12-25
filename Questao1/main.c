@@ -6,8 +6,8 @@
 #include <time.h>
 
 #define NUM_DISCOS 4                      // Número de discos
-#define NUM_PINOS 4                       // Número de pinos
-#define CONFIGURACAO_MAXIMA 4 * 4 * 4 * 4 // NUM_PINOS ^ NUM_DISCOS (número total de configurações possíveis)
+#define NUM_PINOS 3                       // Número de pinos
+#define CONFIGURACAO_MAXIMA 3 * 3 * 3 * 3 // NUM_PINOS ^ NUM_DISCOS (número total de configurações possíveis)
 #define INFINITO INT_MAX
 
 typedef struct
@@ -87,11 +87,13 @@ void djcastra(int inicio, int fim, int matrizAdj[CONFIGURACAO_MAXIMA][CONFIGURAC
   distancias[inicio] = 0;
 
 
-  int vertice_menor_distancia = 0; // inicia com 0 para iniciar o loop
-  for (int x = 0; x < CONFIGURACAO_MAXIMA - 1 && vertice_menor_distancia != -1; x++)
+  int vertice_menor_distancia; // inicia com 0 para iniciar o loop
+  int x = 0;
+  do 
   {
     vertice_menor_distancia = -1;
-    for (int i = 0; i < CONFIGURACAO_MAXIMA; i++)
+
+    for (int i = 0; i < CONFIGURACAO_MAXIMA - 1; i++)
       if (!visitados[i] && (vertice_menor_distancia == -1 || distancias[i] < distancias[vertice_menor_distancia]))
         vertice_menor_distancia = i;
 
@@ -110,9 +112,9 @@ void djcastra(int inicio, int fim, int matrizAdj[CONFIGURACAO_MAXIMA][CONFIGURAC
         }
       }
     }
-  }
-
-
+    
+    x++;
+  } while (x < CONFIGURACAO_MAXIMA - 1 && vertice_menor_distancia != -1);
 }
 
 void exibir_caminho(int inicio, int fim, int *distancias, int *predecessor)
