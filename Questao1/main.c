@@ -1,116 +1,193 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <time.h>
 
-#define N 4         // Number of disks
-#define Pins 3
-#define MAX 81 // Pins ^ N
+#define NUM_DISCOS 4                      // Número de discos
+#define NUM_PINOS 3                       // Número de pinos
+#define CONFIGURACAO_MAXIMA 3 * 3 * 3 * 3 // NUM_PINOS ^ NUM_DISCOS (número total de configurações possíveis)
+#define INFINITO INT_MAX
 
-const int INF = 0x3f3f3f3f;
+typedef struct
+{
+  int configuracao[NUM_DISCOS];
+} Vertice;
 
-typedef struct {
-    int conf[N];
-} vertex;
+bool movimentoValido(Vertice vertice1, Vertice vertice2)
+{
+  bool valido = true;
 
-int adj[MAX][MAX];
-//-----------------------------------------------
-void configuration(vertex *graph) {
-    for (int i = 0; i < MAX; ++i) {
-        int num = i;
-        for (int j = 0; j < N; ++j) {
-            graph[i].conf[j] = num % Pins + 1;
-            num /= Pins;
+  int diferenca = 0, indiceDiferente = -1;
+
+  for (int indiceConfiguracao = 0; indiceConfiguracao < NUM_DISCOS && diferenca <= 1; ++indiceConfiguracao)
+  {
+    if (vertice1.configuracao[indiceConfiguracao] != vertice2.configuracao[indiceConfiguracao])
+    {
+      diferenca++;
+      indiceDiferente = indiceConfiguracao;
+    }
+  }
+
+  if (diferenca > 1)
+    valido = false;
+  else
+  {
+    int invalido = 1;
+    for (int indiceVerificacao = 0; indiceVerificacao < NUM_DISCOS && invalido; indiceVerificacao++)
+      if (indiceVerificacao != indiceDiferente &&
+          ((vertice1.configuracao[indiceVerificacao] == vertice1.configuracao[indiceDiferente] && indiceVerificacao < indiceDiferente) ||
+           (vertice2.configuracao[indiceVerificacao] == vertice2.configuracao[indiceDiferente] && indiceVerificacao < indiceDiferente)))
+        invalido = 0;
+
+    if (!invalido)
+      valido = false;
+  }
+
+  return (valido);
+}
+
+void gerarConfiguracoes(Vertice *grafo, int matrizAdj[][CONFIGURACAO_MAXIMA])
+{
+  for (int indiceConfiguracao = 0; indiceConfiguracao < CONFIGURACAO_MAXIMA; indiceConfiguracao++)
+    for (int indiceVizinho = 0; indiceVizinho < CONFIGURACAO_MAXIMA; indiceVizinho++)
+      matrizAdj[indiceConfiguracao][indiceVizinho] = 0;
+
+  int disco, numero_atribuido;
+  for (int indiceConfiguracao = 0; indiceConfiguracao < CONFIGURACAO_MAXIMA; indiceConfiguracao++)
+  {
+    numero_atribuido = indiceConfiguracao;
+    for (disco = 0; disco < NUM_DISCOS; disco++)
+    {
+      grafo[indiceConfiguracao].configuracao[disco] = numero_atribuido % NUM_PINOS + 1;
+      numero_atribuido /= NUM_PINOS;
+    }
+  }
+
+  for (int indiceAtual = 0; indiceAtual < CONFIGURACAO_MAXIMA; indiceAtual++)
+    for (int indiceVizinho = 0; indiceVizinho < CONFIGURACAO_MAXIMA; indiceVizinho++)
+      if (movimentoValido(grafo[indiceAtual], grafo[indiceVizinho]))
+        matrizAdj[indiceAtual][indiceVizinho] = 1;
+      else
+        matrizAdj[indiceAtual][indiceVizinho] = 0;
+}
+
+void djcastra(int inicio, int fim, int matrizAdj[CONFIGURACAO_MAXIMA][CONFIGURACAO_MAXIMA], int *distancias, int *predecessor)
+{
+  int visitados[CONFIGURACAO_MAXIMA];
+
+  // Inicializa as distâncias, visitados e predecessores
+  for (int i = 0; i < CONFIGURACAO_MAXIMA; i++)
+  {
+    distancias[i] = INFINITO;
+    visitados[i] = 0;
+    predecessor[i] = -1;
+  }
+  distancias[inicio] = 0;
+
+
+  int vertice_menor_distancia = 0; // inicia com 0 para iniciar o loop
+  for (int x = 0; x < CONFIGURACAO_MAXIMA - 1 && vertice_menor_distancia != -1; x++)
+  {
+    vertice_menor_distancia = -1;
+    for (int i = 0; i < CONFIGURACAO_MAXIMA; i++)
+      if (!visitados[i] && (vertice_menor_distancia == -1 || distancias[i] < distancias[vertice_menor_distancia]))
+        vertice_menor_distancia = i;
+
+    if (!(vertice_menor_distancia == -1 || distancias[vertice_menor_distancia] == INFINITO))
+    {
+      visitados[vertice_menor_distancia] = 1;
+
+      for (int v = 0; v < CONFIGURACAO_MAXIMA; v++)
+      {
+        if (!visitados[v] && matrizAdj[vertice_menor_distancia][v] && 
+            distancias[vertice_menor_distancia] != INFINITO && 
+            distancias[vertice_menor_distancia] + matrizAdj[vertice_menor_distancia][v] < distancias[v])
+        {
+          distancias[v] = distancias[vertice_menor_distancia] + matrizAdj[vertice_menor_distancia][v];
+          predecessor[v] = vertice_menor_distancia; 
         }
+      }
     }
-}
-//-----------------------------------------------
-int edge(vertex v1, vertex v2) {
-    int diff = 0, Altered_disc = -1;
+  }
 
-    for (int i = 0; i < N && diff <= 1; ++i) {
-        if (v1.conf[i] != v2.conf[i]) {
-            diff++;
-            Altered_disc = i;
-        }
+
+}
+
+void exibir_caminho(int inicio, int fim, int *distancias, int *predecessor)
+{
+  if (distancias[fim] == INFINITO)
+  {
+    printf("Não há caminho acessível de %d para %d.\n", inicio, fim);
+  }
+  else
+  {
+    // Exibe a menor distância
+    printf("Menor caminho de %d para %d: %d\n", inicio, fim, distancias[fim]);
+
+    // Exibe o caminho
+    printf("Caminho: ");
+    int caminho[CONFIGURACAO_MAXIMA];
+    int indice = 0;
+    int atual = fim;
+
+    // Reconstrói o caminho a partir do destino
+    while (atual != -1)
+    {
+      caminho[indice++] = atual;  // Armazena o vértice no caminho
+      atual = predecessor[atual];  // Vai para o predecessor
     }
 
-    int invalid = 1;
-
-    for (int i = 0; i < N && invalid; ++i) {
-        if (i != Altered_disc && ((v1.conf[i] == v1.conf[Altered_disc] && i < Altered_disc) || (v2.conf[i] == v2.conf[Altered_disc] && i < Altered_disc))) {
-            invalid = 0;
-        }
+    // Exibe o caminho na ordem correta
+    for (int i = indice - 1; i >= 0; i--)
+    {
+      printf("%d", caminho[i]);
+      if (i > 0)
+        printf(" -> ");
     }
-
-    return (diff > 1 || !invalid) ? 0 : 1;
+    printf("\n");
+  }
 }
-//-----------------------------------------------
-void adjacency(vertex *graph) {
-    for (int i = 0; i < MAX; ++i)
-        for (int j = 0; j < MAX; ++j)
-            adj[i][j] = edge(graph[i], graph[j]) ? 1 : INF;
+
+
+void exibir_config(Vertice *vetice)
+{
+  for (int config_atual = 0; config_atual < CONFIGURACAO_MAXIMA; ++config_atual)
+  {
+    printf("vertex %d: ", config_atual);
+    for (int disco_atual = 0; disco_atual < NUM_DISCOS; disco_atual++)
+      printf("%d ", vetice[config_atual].configuracao[disco_atual]);
+    printf("\n");
+  }
 }
-//-----------------------------------------------
-void minimumpath(int *p, int s, int f) {
-    printf("Minimum path between settings %d e %d:\n", s, f);
 
-    int path[f + 1], temp = p[f], pos = 0;
+int main()
+{
+  Vertice grafo[CONFIGURACAO_MAXIMA];
+  int matrizAdj[CONFIGURACAO_MAXIMA][CONFIGURACAO_MAXIMA];
 
-    while(temp != -1) temp = p[path[pos++] = temp];
+  gerarConfiguracoes(grafo, matrizAdj);
+  exibir_config(grafo);
 
-    for (int i = pos - 1; ~i; i--) printf("%d ", path[i]);
+  int inicial, final;
+  printf("Digite o índice da configuração inicial (0 a %d): ", CONFIGURACAO_MAXIMA - 1);
+  scanf("%d", &inicial);
+  printf("Digite o índice da configuração final (0 a %d): ", CONFIGURACAO_MAXIMA - 1);
+  scanf("%d", &final);
 
-    printf("%d\n", f);
-}
-//-----------------------------------------------
-void fordMooreBellman(int s, int end) {
-    int dp[MAX], p[MAX];
+  int distancias[CONFIGURACAO_MAXIMA];
+  int predecessor[CONFIGURACAO_MAXIMA];
 
-    memset(p, -1, sizeof(p));
+  clock_t inicio, fim;
+  inicio = clock();
+  djcastra(inicial, final, matrizAdj, distancias, predecessor);
+  fim = clock();
 
-    for (int i = 0; i < MAX; i++) dp[i] = INF;
-    dp[s] = 0;
-    
-    for (int i = 0; i < MAX - 1; ++i) {
-        int relaxed = 0;
-        for (int j = 0; j < MAX; ++j) {
-            if (dp[j] != INF) {
-                for (int k = 0; k < MAX; k++) {
-                    if (adj[j][k] != INF && dp[j] + adj[j][k] < dp[k]) {
-                        dp[k] = dp[j] + adj[j][k];
-                        p[k] = j;
-                        relaxed = 1;
-                    }
-                }
-            }
-        }
-        if (!relaxed) break;
-    }
-    minimumpath(p, s, end);
-}
-//-----------------------------------------------
-void print(vertex *graph) {
-    for (int i = 0; i < MAX; ++i) {
-        printf("vertex %d: ", i);
-        for (int j = 0; j < N; ++j)
-            printf("%d ", graph[i].conf[j]);
-        printf("\n");
-    }
-}
-//-----------------------------------------------
-int main() {
-    vertex graph[MAX];
+  exibir_caminho(inicial, final, distancias, predecessor);
 
-    configuration(graph);
-    print(graph);
-    adjacency(graph);
+  double tempo = (double)(fim - inicio) / CLOCKS_PER_SEC;
+  printf("Tempo do algoritmo de dijkshtra: %f segundos\n", tempo);
 
-    int init, end;
-
-    printf("Enter the initial configuration:\n"); scanf("%d", &init);
-    printf("Enter the final configuration:\n"); scanf("%d", &end); 
-
-    fordMooreBellman(init, end);
-
-    return 0;
+  return 0;
 }
