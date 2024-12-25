@@ -29,7 +29,7 @@ $(PATH_OUTPUT_DIR)/%: $(PATH_TEST_DIR)/%.c
 	@gcc $(GCC_FLAGS) ${PATH_SRC_FILES} $< -o $@ ${PATH_UNITY_DIR}/unity.c >> /dev/null
 
 build_files: $(PATH_TEST_FILES)
-	@gcc $(GCC_FLAGS) ${PATH_SRC_FILES} main.c -o $(PATH_OUTPUT_DIR)/main >> /dev/null
+	@gcc $(GCC_FLAGS) ${PATH_SRC_FILES} main.c -o $(PATH_OUTPUT_DIR)/main -lm
 	@for test_file in $^; do \
 		output_file=$(PATH_OUTPUT_DIR)/$$(basename $$test_file .c); \
 		gcc $(GCC_FLAGS) ${PATH_SRC_FILES} $$test_file -o $$output_file ${PATH_UNITY_DIR}/unity.c >> /dev/null; \
