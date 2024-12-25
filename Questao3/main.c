@@ -48,10 +48,15 @@ void exibirGrafo(Grafo *grafo)
 void popularGrafo(Grafo *grafo)
 {
   for (int i = 0; i < QUANTIDADE_DE_VERTICES; i++)
-    for (int j = 0; j < QUANTIDADE_DE_VERTICES; j++)
-      grafo->arestas[i][j].confiabilidade = (double)rand() / RAND_MAX;
+  {
+    for (int j = i + 1; j < QUANTIDADE_DE_VERTICES; j++)
+    {
+      double confiabilidade = (double)rand() / RAND_MAX;
+      grafo->arestas[i][j].confiabilidade = confiabilidade;
+      grafo->arestas[j][i].confiabilidade = confiabilidade;
+    }
+  }
 }
-
 void djcastra(int inicio, int fim, Aresta arestas[QUANTIDADE_DE_VERTICES][QUANTIDADE_DE_VERTICES], double *distancias, int *predecessor)
 {
   int visitados[QUANTIDADE_DE_VERTICES];
@@ -65,8 +70,7 @@ void djcastra(int inicio, int fim, Aresta arestas[QUANTIDADE_DE_VERTICES][QUANTI
   }
   distancias[inicio] = 0;
 
-
-  int vertice_maior_confianca; // inicia com 0 para iniciar o loop
+  int vertice_maior_confianca;
   int x = 0;
   do 
   {
@@ -84,11 +88,11 @@ void djcastra(int inicio, int fim, Aresta arestas[QUANTIDADE_DE_VERTICES][QUANTI
         double confiabilidade = arestas[vertice_maior_confianca][v].confiabilidade;
 
         if (!visitados[v] && confiabilidade >= 0 &&
-            distancias[vertice_maior_confianca] != INFINITO_NEGATIVO && 
+            distancias[vertice_maior_confianca] != INFINITO_NEGATIVO &&
             distancias[vertice_maior_confianca] + log(confiabilidade) > distancias[v])
         {
           distancias[v] = distancias[vertice_maior_confianca] + log(confiabilidade);
-          predecessor[v] = vertice_maior_confianca; 
+          predecessor[v] = vertice_maior_confianca;
         }
       }
     }
