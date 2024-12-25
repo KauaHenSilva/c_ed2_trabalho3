@@ -6,8 +6,8 @@
 #include <time.h>
 
 #define NUM_DISCOS 4                      // Número de discos
-#define NUM_PINOS 3                       // Número de pinos
-#define CONFIGURACAO_MAXIMA 3 * 3 * 3 * 3 // NUM_PINOS ^ NUM_DISCOS (número total de configurações possíveis)
+#define NUM_PINOS 4                       // Número de pinos
+#define CONFIGURACAO_MAXIMA 4 * 4 * 4 * 4 // NUM_PINOS ^ NUM_DISCOS (número total de configurações possíveis)
 #define INFINITO INT_MAX
 
 typedef struct
@@ -91,7 +91,7 @@ void fordMooreBellman(int inicio, int fim, int matrizAdj[CONFIGURACAO_MAXIMA][CO
     for (int j = 0; j < CONFIGURACAO_MAXIMA; ++j)
       if (distancia[j] != INFINITO)
         for (int k = 0; k < CONFIGURACAO_MAXIMA; k++)
-          if (matrizAdj[j][k] != 0 && distancia[j] < distancia[k])
+          if (matrizAdj[j][k] != 0 && distancia[j] + matrizAdj[j][k] < distancia[k])
           {
             distancia[k] = distancia[j] + matrizAdj[j][k];
             antessesor[k] = j;
