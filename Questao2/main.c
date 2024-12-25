@@ -75,10 +75,8 @@ void gerarConfiguracoes(Vertice *grafo, int matrizAdj[][CONFIGURACAO_MAXIMA])
 
 //-----------------------------------------------
 // Algoritmo de Ford-Moore-Bellman para encontrar o menor caminho
-void fordMooreBellman(int inicio, int fim, int matrizAdj[CONFIGURACAO_MAXIMA][CONFIGURACAO_MAXIMA])
+void fordMooreBellman(int inicio, int fim, int matrizAdj[CONFIGURACAO_MAXIMA][CONFIGURACAO_MAXIMA], int distancia[], int antessesor[])
 {
-  int distancia[CONFIGURACAO_MAXIMA], antessesor[CONFIGURACAO_MAXIMA];
-
   for (int indiceVertice = 0; indiceVertice < CONFIGURACAO_MAXIMA; indiceVertice++)
     antessesor[indiceVertice] = -1;
 
@@ -101,6 +99,10 @@ void fordMooreBellman(int inicio, int fim, int matrizAdj[CONFIGURACAO_MAXIMA][CO
           }
   }
 
+}
+
+void exibir_caminho(int inicio, int fim, int antessesor[], int distancia[])
+{
   if (distancia[fim] == INFINITO)
     printf("Não há caminho entre %d e %d.\n", inicio, fim);
   else
@@ -143,10 +145,16 @@ int main()
   printf("Digite o índice da configuração final (0 a %d): ", CONFIGURACAO_MAXIMA - 1);
   scanf("%d", &final);
 
+
+  int distancia[CONFIGURACAO_MAXIMA];
+  int antessesor[CONFIGURACAO_MAXIMA];
+
   clock_t inicio, fim;
   inicio = clock();
-  fordMooreBellman(inicial, final, matrizAdj);
+  fordMooreBellman(inicial, final, matrizAdj, distancia, antessesor);
   fim = clock();
+
+  exibir_caminho(inicial, final, antessesor, distancia);
 
   double tempo = (double)(fim - inicio) / CLOCKS_PER_SEC;
   printf("Tempo do algoritmo de Ford-MMoore-Bellman: %f segundos\n", tempo);
