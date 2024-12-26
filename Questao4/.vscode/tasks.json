@@ -1,0 +1,39 @@
+{
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "main",
+      "command": "sh",
+      "args": [
+        "-c",
+        "cd ${workspaceFolder} && make build_funcao_hash_101"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": "build",
+      "detail": "Task to compile all C files in debug mode and run the output."
+    },
+    {
+      "type": "shell",
+      "label": "test_debug",
+      "command": "sh",
+      "args": [
+        "-c",
+        "cd ${workspaceFolder} && make build_files"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": "build",
+      "detail": "Task to compile all C files in debug mode and run the output."
+    }
+  ],
+  "version": "2.0.0"
+}

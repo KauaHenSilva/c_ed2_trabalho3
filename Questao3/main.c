@@ -88,7 +88,7 @@ void djcastra(int inicio, int fim, Aresta arestas[QUANTIDADE_DE_VERTICES][QUANTI
         double confiabilidade = arestas[vertice_maior_confianca][v].confiabilidade;
 
         if (!visitados[v] && confiabilidade >= 0 &&
-            distancias[vertice_maior_confianca] != INFINITO_NEGATIVO &&
+            distanccias[vertice_maior_confianca] != INFINITO_NEGATIVO &&
             distancias[vertice_maior_confianca] + log(confiabilidade) > distancias[v])
         {
           distancias[v] = distancias[vertice_maior_confianca] + log(confiabilidade);
