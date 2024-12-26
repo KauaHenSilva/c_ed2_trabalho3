@@ -4,7 +4,6 @@
 #include <string.h>
 
 #define TAMANHO_MATRICULA 6
-#define TAMANHO_LINHA 7
 #define TAMANHO_DISPONIVEL_HASH 101
 
 typedef struct Funcionario
