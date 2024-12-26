@@ -27,33 +27,36 @@ typedef struct stGrafo
 
 void inicializarGrafo(Grafo *grafo)
 {
-  for (int i = 0; i < QUANTIDADE_DE_VERTICES; i++)
+  for (int vertice_inicial = 0; vertice_inicial < QUANTIDADE_DE_VERTICES; vertice_inicial++)
   {
-    grafo->vertices[i].id = i;
-    for (int j = 0; j < QUANTIDADE_DE_VERTICES; j++)
-      grafo->arestas[i][j].confiabilidade = 0;
+    grafo->vertices[vertice_inicial].id = vertice_inicial;
+    for (int vertice_final = 0; vertice_final < QUANTIDADE_DE_VERTICES; vertice_final++)
+      grafo->arestas[vertice_inicial][vertice_final].confiabilidade = 0;
   }
 }
 
 void exibirGrafo(Grafo *grafo)
 {
-  for (int i = 0; i < QUANTIDADE_DE_VERTICES; i++)
+  for (int vertice_inicial = 0; vertice_inicial < QUANTIDADE_DE_VERTICES; vertice_inicial++)
   {
-    printf("Vertice %d: \n", grafo->vertices[i].id);
-    for (int j = 0; j < QUANTIDADE_DE_VERTICES; j++)
-      printf("\t Aresta [%d][%d]: confibilidade %f\n", i, j, grafo->arestas[i][j].confiabilidade);
+    printf("Vertice %d: \n", grafo->vertices[vertice_inicial].id);
+    for (int vertice_final = 0; vertice_final < QUANTIDADE_DE_VERTICES; vertice_final++)
+    {
+      printf("\tAresta [%d][%d]: " ,vertice_inicial, vertice_final);
+      printf("confibilidade %f\n", grafo->arestas[vertice_inicial][vertice_final].confiabilidade);
+    }
   }
 }
 
 void popularGrafo(Grafo *grafo)
 {
-  for (int i = 0; i < QUANTIDADE_DE_VERTICES; i++)
+  for (int vertice_inicial = 0; vertice_inicial < QUANTIDADE_DE_VERTICES; vertice_inicial++)
   {
-    for (int j = i + 1; j < QUANTIDADE_DE_VERTICES; j++)
+    for (int vertice_final = vertice_inicial + 1; vertice_final < QUANTIDADE_DE_VERTICES; vertice_final++)
     {
       double confiabilidade = (double)rand() / RAND_MAX;
-      grafo->arestas[i][j].confiabilidade = confiabilidade;
-      grafo->arestas[j][i].confiabilidade = confiabilidade;
+      grafo->arestas[vertice_inicial][vertice_final].confiabilidade = confiabilidade;
+      grafo->arestas[vertice_final][vertice_inicial].confiabilidade = confiabilidade;
     }
   }
 }
@@ -62,22 +65,22 @@ void djcastra(int inicio, int fim, Aresta arestas[QUANTIDADE_DE_VERTICES][QUANTI
   int visitados[QUANTIDADE_DE_VERTICES];
 
   // Inicializa as distâncias, visitados e predecessores
-  for (int i = 0; i < QUANTIDADE_DE_VERTICES; i++)
+  for (int vertice_inicial = 0; vertice_inicial < QUANTIDADE_DE_VERTICES; vertice_inicial++)
   {
-    distancias[i] = INFINITO_NEGATIVO;
-    visitados[i] = 0;
-    predecessor[i] = -1;
+    distancias[vertice_inicial] = INFINITO_NEGATIVO;
+    visitados[vertice_inicial] = 0;
+    predecessor[vertice_inicial] = -1;
   }
   distancias[inicio] = 0;
 
   int vertice_maior_confianca;
-  int x = 0;
+  int confiracao_vertice_atual = 0;
   do 
   {
     vertice_maior_confianca = -1;
-    for (int i = 0; i < QUANTIDADE_DE_VERTICES - 1; i++)
-      if (!visitados[i] && (vertice_maior_confianca == -1 || distancias[i] > distancias[vertice_maior_confianca]))
-        vertice_maior_confianca = i;
+    for (int vertice_atual = 0; vertice_atual < QUANTIDADE_DE_VERTICES - 1; vertice_atual++)
+      if (!visitados[vertice_atual] && (vertice_maior_confianca == -1 || distancias[vertice_atual] > distancias[vertice_maior_confianca]))
+        vertice_maior_confianca = vertice_atual;
 
     if (!(vertice_maior_confianca == -1 || distancias[vertice_maior_confianca] == INFINITO_NEGATIVO))
     {
@@ -88,7 +91,7 @@ void djcastra(int inicio, int fim, Aresta arestas[QUANTIDADE_DE_VERTICES][QUANTI
         double confiabilidade = arestas[vertice_maior_confianca][v].confiabilidade;
 
         if (!visitados[v] && confiabilidade >= 0 &&
-            distanccias[vertice_maior_confianca] != INFINITO_NEGATIVO &&
+            distancias[vertice_maior_confianca] != INFINITO_NEGATIVO &&
             distancias[vertice_maior_confianca] + log(confiabilidade) > distancias[v])
         {
           distancias[v] = distancias[vertice_maior_confianca] + log(confiabilidade);
@@ -96,8 +99,8 @@ void djcastra(int inicio, int fim, Aresta arestas[QUANTIDADE_DE_VERTICES][QUANTI
         }
       }
     }
-    x++;
-  } while (x < QUANTIDADE_DE_VERTICES - 1 && vertice_maior_confianca != -1);
+    confiracao_vertice_atual++;
+  } while (confiracao_vertice_atual < QUANTIDADE_DE_VERTICES - 1 && vertice_maior_confianca != -1);
 }
 
 void exibirCaminho(int inicio, int fim, int *predecessor)
@@ -108,24 +111,25 @@ void exibirCaminho(int inicio, int fim, int *predecessor)
   {
     int caminho[QUANTIDADE_DE_VERTICES];
     int contador = 0;
-    int i = fim;
-    while (i != -1)
+    int vertice_atual = fim;
+    while (vertice_atual != -1)
     {
-      caminho[contador] = i;
-      i = predecessor[i];
+      caminho[contador] = vertice_atual;
+      vertice_atual = predecessor[vertice_atual];
       contador++;
     }
 
     printf("Caminho entre %d e %d: ", inicio, fim);
-    for (int x = contador - 1; x >= 0; x--)
-      printf("%d ", caminho[x]);
+    for (int indice = contador - 1; indice >= 0; indice--)
+      printf("%d ", caminho[indice]);
     printf("\n");
   }
 }
 
 int main()
 {
-  srand((unsigned)time(NULL));
+  srand((unsigned) 1);
+  // srand((unsigned) 2);
 
   Grafo grafo;
   inicializarGrafo(&grafo);

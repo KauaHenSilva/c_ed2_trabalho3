@@ -78,17 +78,17 @@ void djcastra(int inicio, int fim, int matrizAdj[CONFIGURACAO_MAXIMA][CONFIGURAC
   int visitados[CONFIGURACAO_MAXIMA];
 
   // Inicializa as distâncias, visitados e predecessores
-  for (int i = 0; i < CONFIGURACAO_MAXIMA; i++)
+  for (int configuracao_atual = 0; configuracao_atual < CONFIGURACAO_MAXIMA; configuracao_atual++)
   {
-    distancias[i] = INFINITO;
-    visitados[i] = 0;
-    predecessor[i] = -1;
+    distancias[configuracao_atual] = INFINITO;
+    visitados[configuracao_atual] = 0;
+    predecessor[configuracao_atual] = -1;
   }
   distancias[inicio] = 0;
 
 
   int vertice_menor_distancia; // inicia com 0 para iniciar o loop
-  int x = 0;
+  int configuracao_atual = 0;
   do 
   {
     vertice_menor_distancia = -1;
@@ -113,8 +113,8 @@ void djcastra(int inicio, int fim, int matrizAdj[CONFIGURACAO_MAXIMA][CONFIGURAC
       }
     }
     
-    x++;
-  } while (x < CONFIGURACAO_MAXIMA - 1 && vertice_menor_distancia != -1);
+    configuracao_atual++;
+  } while (configuracao_atual < CONFIGURACAO_MAXIMA - 1 && vertice_menor_distancia != -1);
 }
 
 void exibir_caminho(int inicio, int fim, int *distancias, int *predecessor)
@@ -142,11 +142,11 @@ void exibir_caminho(int inicio, int fim, int *distancias, int *predecessor)
     }
 
     // Exibe o caminho na ordem correta
-    for (int i = indice - 1; i >= 0; i--)
+    for (int caminhoIndice = indice - 1; caminhoIndice >= 0; caminhoIndice--)
     {
-      printf("%d", caminho[i]);
-      if (i > 0)
-        printf(" -> ");
+      printf("%d", caminho[caminhoIndice]);
+      if (caminhoIndice > 0)
+      printf(" -> ");
     }
     printf("\n");
   }
@@ -190,6 +190,5 @@ int main()
 
   double tempo = (double)(fim - inicio) / CLOCKS_PER_SEC;
   printf("Tempo do algoritmo de dijkshtra: %f segundos\n", tempo);
-
   return 0;
 }

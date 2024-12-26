@@ -48,8 +48,8 @@ typedef struct stTabelaHash
 
 void inicializar_tabela_hash(TabelaHash *tabela_hash)
 {
-  for (int i = 0; i < TAMANHO_DISPONIVEL_HASH; i++)
-    tabela_hash->hash[i] = -1;
+  for (int index_hash_atual = 0; index_hash_atual < TAMANHO_DISPONIVEL_HASH; index_hash_atual++)
+    tabela_hash->hash[index_hash_atual] = -1;
 }
 
 int char_to_int(char c)
@@ -63,8 +63,10 @@ int hash_1(char matricula[])
 
   aux[0] = matricula[TAMANHO_MATRICULA - 2];
   aux[1] = matricula[TAMANHO_MATRICULA - 1];
-  for (int i = 0, j = 2; i < TAMANHO_MATRICULA - 2; i++, j++)
-    aux[j] = matricula[i];
+  for (int index_matricula_velha = 0, idx_matricula_new = 2;
+       index_matricula_velha < TAMANHO_MATRICULA - 2;
+       index_matricula_velha++, idx_matricula_new++) 
+    aux[idx_matricula_new] = matricula[index_matricula_velha];
 
   int valorInteiro = atoi((char[]){aux[1], aux[3], aux[5]});
   return valorInteiro % TAMANHO_DISPONIVEL_HASH;
@@ -75,8 +77,8 @@ int hash_2(char matricula[])
     int parte1 = (char_to_int(matricula[1 - 1]) * 100) + (char_to_int(matricula[3 - 1]) * 10) + (char_to_int(matricula[6 - 1]));
     int parte2 = (char_to_int(matricula[2 - 1]) * 100) + (char_to_int(matricula[4 - 1]) * 10) + (char_to_int(matricula[5 - 1]));
 
-    int fole_shift = parte1 + parte2;
-    return fole_shift % TAMANHO_DISPONIVEL_HASH;
+    int soma_partes = parte1 + parte2;
+    return soma_partes % TAMANHO_DISPONIVEL_HASH;
 }
 
 int colisao_hash_1(int hash, char matricula[])
@@ -128,7 +130,7 @@ void test_hash(int hash_func(char[]), int colisao_hash(int, char[]))
   int qtd_colisoes = 0;
   clock_t tempo_efetivar_hash = 0;
 
-  for (int x = 0; x < 1000; x++)
+  for (int criar_1000_funcionarios = 0; criar_1000_funcionarios < 1000; criar_1000_funcionarios++)
   {
     Funcionario funcionario = gerar_funcionario();
 
