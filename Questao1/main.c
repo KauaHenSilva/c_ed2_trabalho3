@@ -73,7 +73,7 @@ void gerarConfiguracoes(Vertice *grafo, int matrizAdj[][CONFIGURACAO_MAXIMA])
         matrizAdj[indiceAtual][indiceVizinho] = 0;
 }
 
-void djcastra(int inicio, int fim, int matrizAdj[CONFIGURACAO_MAXIMA][CONFIGURACAO_MAXIMA], int *distancias, int *predecessor)
+void djcastra(int inicio, int matrizAdj[CONFIGURACAO_MAXIMA][CONFIGURACAO_MAXIMA], int *distancias, int *predecessor)
 {
   int visitados[CONFIGURACAO_MAXIMA];
 
@@ -183,7 +183,7 @@ int main()
 
   clock_t inicio, fim;
   inicio = clock();
-  djcastra(inicial, final, matrizAdj, distancias, predecessor);
+  djcastra(inicial, matrizAdj, distancias, predecessor);
   fim = clock();
 
   exibir_caminho(inicial, final, distancias, predecessor);
