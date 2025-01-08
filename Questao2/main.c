@@ -75,7 +75,7 @@ void gerarConfiguracoes(Vertice *grafo, int matrizAdj[][CONFIGURACAO_MAXIMA])
 
 //-----------------------------------------------
 // Algoritmo de Ford-Moore-Bellman para encontrar o menor caminho
-void fordMooreBellman(int inicio, int fim, int matrizAdj[CONFIGURACAO_MAXIMA][CONFIGURACAO_MAXIMA], int distancia[], int antessesor[])
+void fordMooreBellman(int inicio, int matrizAdj[CONFIGURACAO_MAXIMA][CONFIGURACAO_MAXIMA], int distancia[], int antessesor[])
 {
   for (int indiceVertice = 0; indiceVertice < CONFIGURACAO_MAXIMA; indiceVertice++)
     antessesor[indiceVertice] = -1;
@@ -151,7 +151,7 @@ int main()
 
   clock_t inicio, fim;
   inicio = clock();
-  fordMooreBellman(inicial, final, matrizAdj, distancia, antessesor);
+  fordMooreBellman(inicial, matrizAdj, distancia, antessesor);
   fim = clock();
 
   exibir_caminho(inicial, final, antessesor, distancia);

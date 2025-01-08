@@ -1,10 +1,14 @@
 # Variáveis de Configuração
-C_FLAGS = -Wextra -Werror -Wconversion -Wpointer-arith -Wpedantic \
+C_FLAGS = -Wall -Wextra -Wconversion -Wpointer-arith -Wpedantic \
           -Werror=deprecated-declarations -Wformat -Wnull-dereference \
-          -Wshadow -Wimplicit-fallthrough \
-          -Wunreachable-code -Wduplicated-cond -Wduplicated-branches \
-          -Wrestrict -Wnull-dereference -Wdouble-promotion \
-          -Wformat-y2k
+          -Wshadow -Wimplicit-fallthrough -Wunreachable-code \
+          -Wduplicated-cond -Wduplicated-branches -Wrestrict \
+          -Wdouble-promotion -Wformat-y2k -Wmissing-include-dirs \
+          -Wlogical-op -Wswitch-enum -Wswitch-default -Wcast-align \
+          -Wcast-qual -Wwrite-strings -Wundef -Wredundant-decls \
+          -Wfloat-equal -Winline -Wstack-protector -Woverlength-strings \
+          -Wc++-compat  -Wshift-overflow \
+          -Wpacked -Wdisabled-optimization -Wunused-result
 
 GCC_FLAGS = -g -I. $(C_FLAGS)
 

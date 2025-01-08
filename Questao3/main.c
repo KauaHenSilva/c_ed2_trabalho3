@@ -5,9 +5,10 @@
 #include <limits.h>
 #include <time.h>
 #include <math.h>
+#include <float.h>
 
 #define QUANTIDADE_DE_VERTICES 3
-#define INFINITO_NEGATIVO INT_MIN
+#define INFINITO_NEGATIVO -DBL_MAX
 
 typedef struct stAresta
 {
@@ -60,7 +61,7 @@ void popularGrafo(Grafo *grafo)
     }
   }
 }
-void djcastra(int inicio, int fim, Aresta arestas[QUANTIDADE_DE_VERTICES][QUANTIDADE_DE_VERTICES], double *distancias, int *predecessor)
+void djcastra(int inicio, Aresta arestas[QUANTIDADE_DE_VERTICES][QUANTIDADE_DE_VERTICES], double *distancias, int *predecessor)
 {
   int visitados[QUANTIDADE_DE_VERTICES];
 
@@ -83,6 +84,8 @@ void djcastra(int inicio, int fim, Aresta arestas[QUANTIDADE_DE_VERTICES][QUANTI
         vertice_maior_confianca = vertice_atual;
 
     if (!(vertice_maior_confianca == -1 || distancias[vertice_maior_confianca] == INFINITO_NEGATIVO))
+    // Sobre o erro: main.c:86:80: error: comparing floating-point with ‘==’ or ‘!=’ is unsafe [-Werror=float-equal]
+    // Por mais que o erro seja de comparação de ponto flutuante, a comparação é feita com um valor constante, então não há problema
     {
       visitados[vertice_maior_confianca] = 1;
 
@@ -92,6 +95,8 @@ void djcastra(int inicio, int fim, Aresta arestas[QUANTIDADE_DE_VERTICES][QUANTI
 
         if (!visitados[v] && confiabilidade >= 0 &&
             distancias[vertice_maior_confianca] != INFINITO_NEGATIVO &&
+            // Sobre o erro: main.c:96:13: error: comparing floating-point with ‘==’ or ‘!=’ is unsafe [-Werror=float-equal]
+            // Por mais que o erro seja de comparação de ponto flutuante, a comparação é feita com um valor constante, então não há problema
             distancias[vertice_maior_confianca] + log(confiabilidade) > distancias[v])
         {
           distancias[v] = distancias[vertice_maior_confianca] + log(confiabilidade);
@@ -139,7 +144,7 @@ int main()
   double distancias[QUANTIDADE_DE_VERTICES];
   int predecessor[QUANTIDADE_DE_VERTICES];
 
-  djcastra(0, 2, grafo.arestas, distancias, predecessor);
+  djcastra(0, grafo.arestas, distancias, predecessor);
 
   exibirCaminho(0, 2, predecessor);
   return 0;
