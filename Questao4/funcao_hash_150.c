@@ -141,8 +141,14 @@ void test_hash(int hash_func(char[]), int colisao_hash(int, char[]))
     tempo_efetivar_hash += (fim - inicio);
   }
 
+  int qtd_ocupado = 0;
+  for (int posicao = 0; posicao < TAMANHO_DISPONIVEL_HASH; posicao++)
+    if(tabela_hash.hash[posicao] != -1)
+      qtd_ocupado++;
+
   printf("Tempo para efetivar: %f\n", (double) tempo_efetivar_hash / CLOCKS_PER_SEC);
   printf("Quantidade de colisoes: %d\n", qtd_colisoes);
+  printf("Quantidade ocupado: %d\n", qtd_ocupado);
 }
 
 int main()
