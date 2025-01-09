@@ -95,11 +95,11 @@ void djcastra(int inicio, Aresta arestas[QUANTIDADE_DE_VERTICES][QUANTIDADE_DE_V
 
         if (!visitados[v] && confiabilidade >= 0 &&
             distancias[vertice_maior_confianca] != INFINITO_NEGATIVO &&
-            // distancias[vertice_maior_confianca] + log(confiabilidade) > distancias[v])
-            distancias[vertice_maior_confianca] * confiabilidade > distancias[v])
+            distancias[vertice_maior_confianca] + log(confiabilidade) > distancias[v])
+            // distancias[vertice_maior_confianca] * confiabilidade > distancias[v])
         {
-          // distancias[v] = distancias[vertice_maior_confianca] + log(confiabilidade);
-          distancias[v] = distancias[vertice_maior_confianca] * confiabilidade;
+          distancias[v] = distancias[vertice_maior_confianca] + log(confiabilidade);
+          // distancias[v] = distancias[vertice_maior_confianca] * confiabilidade;
           predecessor[v] = vertice_maior_confianca;
         }
       }
@@ -133,8 +133,8 @@ void exibirCaminho(int inicio, int fim, int *predecessor)
 
 int main()
 {
-  // srand((unsigned) 1);
-  srand((unsigned) 2);
+  srand((unsigned) 1);
+  // srand((unsigned) 2);
 
   Grafo grafo;
   inicializarGrafo(&grafo);
