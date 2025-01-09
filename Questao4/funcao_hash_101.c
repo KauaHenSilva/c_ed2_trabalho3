@@ -58,13 +58,13 @@ int char_to_int(char c)
 
 int hash_1(char matricula[])
 {
-  char aux[TAMANHO_MATRICULA];
+  char aux[TAMANHO_MATRICULA + 1];
 
   aux[0] = matricula[TAMANHO_MATRICULA - 2];
   aux[1] = matricula[TAMANHO_MATRICULA - 1];
   for (int i = 0, j = 2; i < TAMANHO_MATRICULA - 2; i++, j++)
     aux[j] = matricula[i];
-
+  
   int valorInteiro = atoi((char[]){aux[1], aux[3], aux[5]});
   return valorInteiro % TAMANHO_DISPONIVEL_HASH;
 }
